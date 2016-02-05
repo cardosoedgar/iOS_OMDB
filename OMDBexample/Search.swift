@@ -11,7 +11,7 @@ import Foundation
 class Search {
     
     var movieList: [MovieSearch]?
-    var totalResults: Int?
+    var totalResults: Int!
     var currentPage = 1
     var query: String!
     
@@ -20,6 +20,10 @@ class Search {
     }
     
     class func movieListFromJson(json: AnyObject?) -> [MovieSearch]? {
+        guard json != nil else {
+            return nil
+        }
+        
         if let movieList = json!["Search"] as? NSArray {
             return MovieSearch.parseMovies(movieList)
         }
@@ -27,11 +31,15 @@ class Search {
         return nil
     }
     
-    class func totalResultsFromJson(json: AnyObject?) -> Int? {
-        if let totalResults = json!["totalResults"] as? Int {
-            return totalResults
+    class func totalResultsFromJson(json: AnyObject?) -> Int {
+        guard json != nil else {
+            return 0
         }
         
-        return nil
+        if let totalResults = json!["totalResults"] as? String {
+            return Int(totalResults)!
+        }
+        
+        return 0
     }
 }

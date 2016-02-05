@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15D21" minimumToolsVersion="Xcode 7.0">
-    <entity name="Movie" syncable="YES">
+    <entity name="Movie" representedClassName=".Movie" syncable="YES">
         <attribute name="actors" attributeType="String" syncable="YES"/>
+        <attribute name="country" attributeType="String" syncable="YES"/>
         <attribute name="director" attributeType="String" syncable="YES"/>
         <attribute name="genre" attributeType="String" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="language" attributeType="String" syncable="YES"/>
+        <attribute name="metascore" attributeType="String" syncable="YES"/>
         <attribute name="plot" attributeType="String" syncable="YES"/>
         <attribute name="poster" attributeType="String" syncable="YES"/>
         <attribute name="rated" attributeType="String" syncable="YES"/>
@@ -12,10 +15,11 @@
         <attribute name="released" attributeType="String" syncable="YES"/>
         <attribute name="runtime" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
+        <attribute name="votes" attributeType="String" syncable="YES"/>
         <attribute name="writer" attributeType="String" syncable="YES"/>
         <attribute name="year" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Movie" positionX="-63" positionY="-18" width="128" height="240"/>
+        <element name="Movie" positionX="-63" positionY="-18" width="128" height="300"/>
     </elements>
 </model>

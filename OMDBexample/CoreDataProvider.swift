@@ -13,15 +13,28 @@ class CoreDataProvider {
     
     let coreData = CoreDataStackManager()
 
-    func getMovies() -> [Movie]? {
+    func saveMovie(json: NSDictionary?) -> Movie? {
+        if json != nil {
+            let movie = Movie.initFromJson(json!, andContext: coreData.context)
+            coreData.saveContext()
+            return movie
+        }
+        
+        return nil
+    }
+    
+    func getMovies() -> [Movie] {
         let movieFetch = NSFetchRequest(entityName: "Movie")
         
         do {
-            let result = try coreData.context.executeFetchRequest(movieFetch) as? [Movie]
-            return result
+            if let result = try coreData.context.executeFetchRequest(movieFetch) as? [Movie] {
+                return result
+            }
         } catch {
-            return nil
+            return [Movie]()
         }
+        
+        return [Movie]()
     }
     
     func deleteMovie(movie: Movie) {

@@ -13,6 +13,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
+    var movieSelectedDelegate: MovieSelectedDelegate!
     var search = Search()
     let helperMethods = HelperMethods()
     var isRefreshing = false
@@ -20,6 +21,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.reloadData()
+        touchToDismissKeyboard()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -27,20 +29,30 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     
     func requestMovies() {
-        Alamofire.request(.GET, "http://www.omdbapi.com/?s=\(search.query)&type=movie&page=\(search.currentPage)").responseJSON {
-            (response) -> Void in
-            
-            if let json = response.result.value {
-                if let result = Search.movieListFromJson(json) {
-                    self.search.movieList?.appendContentsOf(result)
-                }
-                self.search.totalResults = Search.totalResultsFromJson(json)
-                self.tableView.reloadData()
-                self.isRefreshing = false
+        helperMethods.startActivityIndicator()
+        var url = "http://www.omdbapi.com/?s=\(search.query)&type=movie&page=\(search.currentPage)"
+        url = url.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        helperMethods.requestMovie(url) { (json, error) -> Void in
+            self.helperMethods.stopActivityIndicator()
+            guard error == nil else {
+                self.showAlert(error!)
+                return
             }
+            
+            if let result = Search.movieListFromJson(json) {
+                self.search.movieList?.appendContentsOf(result)
+            }
+            self.search.totalResults = Search.totalResultsFromJson(json)
+            self.tableView.reloadData()
+            self.isRefreshing = false
             
             self.search.currentPage++
         }
+    }
+    
+    func showAlert(message: String) {
+        let alert = self.helperMethods.createAlert(message)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     //MARK: Table Delegate + Data Source
@@ -76,6 +88,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        if let id = search.movieList?[indexPath.row].id {
+            movieSelectedDelegate.downloadMovieInfo(id)
+        }
         navigationController?.popViewControllerAnimated(true)
     }
     
@@ -90,6 +105,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 search = Search()
                 search.query = query
                 requestMovies()
+                dismissKeyboard()
             }
         }
     }
@@ -102,5 +118,16 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 requestMovies()
             }
         }
+    }
+    
+    //MARK: keyboard dismiss
+    func touchToDismissKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    func dismissKeyboard() {
+        searchBar.resignFirstResponder()
     }
 }

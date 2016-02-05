@@ -11,15 +11,9 @@ import UIKit
 
 extension UIImageView {
     func downloadImage(path: String?) {
-        guard let stringPath = path else {
-            return
-        }
-        
-        Alamofire.request(.GET, stringPath).responseImage { response in
-                
-            if let image = response.result.value {
-                self.image = image
-            }
+        let helperMethods = HelperMethods()
+        helperMethods.downloadImage(path) { (image) -> Void in
+            self.image = image
         }
     }
 }

@@ -23,6 +23,10 @@ class Movie: NSManagedObject {
     @NSManaged var plot: String
     @NSManaged var poster: String
     @NSManaged var rating: String
+    @NSManaged var country: String
+    @NSManaged var language: String
+    @NSManaged var metascore: String
+    @NSManaged var votes: String
     
     class func initFromJson(json: NSDictionary, andContext context: NSManagedObjectContext) -> Movie {
         let movieEntity = NSEntityDescription.entityForName("Movie", inManagedObjectContext: context)
@@ -41,6 +45,10 @@ class Movie: NSManagedObject {
         movie.plot = json["Plot"] as! String
         movie.poster = json["Poster"] as! String
         movie.rating = json["imdbRating"] as! String
+        movie.language = json["Language"] as! String
+        movie.country = json["Country"] as! String
+        movie.metascore = json["Metascore"] as! String
+        movie.votes = json["imdbVotes"] as! String
         
         return movie
     }
